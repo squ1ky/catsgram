@@ -1,43 +1,56 @@
 package ru.project.catsgram.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import ru.project.catsgram.User;
+import ru.project.catsgram.model.User;
 import ru.project.catsgram.exceptions.InvalidEmailException;
 import ru.project.catsgram.exceptions.UserAlreadyExistException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
     List<User> users = new ArrayList<>();
     Set<String> emailOfUsers = new HashSet<>();
 
 
-    @GetMapping("/users")
+    @GetMapping
     public List<User> allUsers() {
         return users;
     }
 
-//    @PutMapping("/users")
-//    public User createOrUpdateUser(@RequestBody User user) throws InvalidEmailException {
-//        if (emailOfUsers.contains(user.getEmail())) {
-//
-//        } else {
-//
-//        }
-//    }
+    @PutMapping
+    public User createOrUpdateUser(@RequestBody User user)
+            throws InvalidEmailException, UserAlreadyExistException {
 
+        if (emailOfUsers.contains(user.getEmail())) {
+            for (User currentUser : users) {
+                if (currentUser.getEmail().equals(user.getEmail())) {
+                    currentUser.setNickname(user.getNickname());
+                    currentUser.setBirthdate(user.getBirthdate());
+                    return user;
+                }
+            }
+        }
 
-    @PostMapping("/user")
+        User currentUser = new User(user.getEmail(), user.getNickname(), user.getBirthdate());
+        createUser(currentUser);
+        return currentUser;
+
+    }
+
+    @PostMapping
     public User createUser(@RequestBody User user) throws UserAlreadyExistException, InvalidEmailException {
         if (user.getEmail().isEmpty() || user.getEmail() == null) {
             throw new InvalidEmailException("Неправильный формат e-mail");
@@ -47,8 +60,9 @@ public class UserController {
             } else {
                 users.add(user);
                 emailOfUsers.add(user.getEmail());
-                return user;
             }
         }
+
+        return user;
     }
 }
