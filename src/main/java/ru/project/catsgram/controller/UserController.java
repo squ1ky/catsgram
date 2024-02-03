@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ru.project.catsgram.model.User;
 import ru.project.catsgram.exceptions.InvalidEmailException;
 import ru.project.catsgram.exceptions.UserAlreadyExistException;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
@@ -21,12 +23,15 @@ import java.util.HashSet;
 @RequestMapping("/users")
 public class UserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     List<User> users = new ArrayList<>();
     Set<String> emailOfUsers = new HashSet<>();
 
 
     @GetMapping
     public List<User> allUsers() {
+        logger.info("Количество пользователей в данный момент: " + users.size());
         return users;
     }
 
@@ -62,7 +67,7 @@ public class UserController {
                 emailOfUsers.add(user.getEmail());
             }
         }
-
+        logger.info("Создан новый пользователь: " + user.getNickname());
         return user;
     }
 }
