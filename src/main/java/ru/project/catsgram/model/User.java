@@ -2,7 +2,9 @@ package ru.project.catsgram.model;
 
 import java.time.LocalDate;
 
+
 public class User {
+
     private String email;
     private String nickname;
     private LocalDate birthdate;
@@ -61,4 +63,5 @@ public class User {
     public void setBirthdate(LocalDate birthdate) {
         this.birthdate = birthdate;
     }
+
 }
