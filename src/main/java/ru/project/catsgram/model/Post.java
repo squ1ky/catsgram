@@ -2,8 +2,7 @@ package ru.project.catsgram.model;
 
 import java.time.Instant;
 
-
-public class Post {
+public class Post implements Comparable<Post> {
 
     private Integer id;
     private static Integer nextId = 1;
@@ -43,4 +42,16 @@ public class Post {
         this.description = description;
     }
 
+    @Override
+    public int compareTo(Post p) {
+        if (this.getCreationDate().equals(p.getCreationDate())) {
+            return 0;
+        }
+
+        if (this.getCreationDate().isBefore(p.getCreationDate())) {
+            return -1;
+        }
+
+        return 1;
+    }
 }
