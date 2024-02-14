@@ -21,7 +21,6 @@ public class PostService {
         } else {
             page = page - 1;
             if (sort.equals("asc") || sort.equals("desc")) {
-                List<Post> result = new ArrayList<>();
                 Collections.sort(posts);
                 if (sort.equals("desc")) {
                     Collections.reverse(posts);
@@ -36,6 +35,17 @@ public class PostService {
 
         return posts;
     }
+
+    public List<Post> getPostsOfFriends(List<String> friends, String sort, Integer size) {
+        List<Post> friendsPosts = new ArrayList<>();
+        for (Post post : posts) {
+            if (friends.contains(post.getAuthor())) {
+                friendsPosts.add(post);
+            }
+        }
+        return friendsPosts;
+    }
+
 
     public Post create(Post post) {
         posts.add(post);
