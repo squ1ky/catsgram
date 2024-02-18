@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ru.project.catsgram.exceptions.IncorrectParameterException;
+import ru.project.catsgram.exceptions.PostNotFoundException;
 import ru.project.catsgram.model.Post;
 import ru.project.catsgram.service.PostService;
 import ru.project.catsgram.exceptions.InvalidPageOrSize;
 
-import java.util.Optional;
 import java.util.List;
 
 
@@ -32,28 +33,45 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public List<Post> findAll  (
+    public List<Post> findAll (
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size) throws InvalidPageOrSize {
+            @RequestParam(required = false) Integer size) throws InvalidPageOrSize, IncorrectParameterException {
         logger.debug("Текущее количество постов: " + postService.getPosts().size());
-        if (sort == null) {
-            sort = "desc";
+        if (sort == null || page == null || size == null) {
+            if (sort == null) {
+                sort = "desc";
+            }
+            if (page == null) {
+                page = 1;
+            }
+            if (size == null) {
+                size = 1;
+            }
         }
-        if (page == null) {
-            page = 1;
+        if (!sort.equals("asc") && !sort.equals("desc")) {
+            throw new IncorrectParameterException("sort");
         }
-        if (size == null) {
-            size = postService.getPosts().size();
+        if (page <= 0) {
+            throw new IncorrectParameterException("page");
         }
+        if (size <= 0) {
+            throw new IncorrectParameterException("size");
+        }
+        // Должен быть хотя бы 1 пост
         return postService.findAll(sort, page, size);
     }
 
     @GetMapping("/posts/{postId}")
-    public Optional<Post> findById(@PathVariable Integer postId) {
-        return postService.getPosts().stream()
-                .filter(x -> x.getId().equals(postId))
-                .findFirst();
+    public Post findById(@PathVariable int postId) throws PostNotFoundException {
+        List<Post> posts = postService.getPosts();
+        for (Post post : posts) {
+            if (post.getId() == postId) {
+                return post;
+            }
+        }
+
+        throw new PostNotFoundException("");
     }
 
     @PostMapping(value = "/post")

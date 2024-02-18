@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ru.project.catsgram.exceptions.UserNotFoundException;
 import ru.project.catsgram.model.User;
 import ru.project.catsgram.service.UserService;
 import ru.project.catsgram.exceptions.InvalidEmailException;
 import ru.project.catsgram.exceptions.UserAlreadyExistException;
 
-import java.util.Optional;
 import java.util.List;
 
 
@@ -38,10 +38,15 @@ public class UserController {
     }
 
     @GetMapping("/users/{email}")
-    public Optional<User> findByEmail(@PathVariable String email) {
-        return userService.getUsers().stream()
-                .filter(x -> x.getEmail().equals(email))
-                .findFirst();
+    public User findByEmail(@PathVariable String email) throws UserNotFoundException {
+        List<User> users = userService.getUsers();
+        for (User user : users) {
+            if (user.getEmail().equals(email)) {
+                return user;
+            }
+        }
+
+        throw new UserNotFoundException("");
     }
 
     @PutMapping("/user")

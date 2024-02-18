@@ -42,10 +42,10 @@ public class UserService {
 
     public User createUser(User user) throws UserAlreadyExistException, InvalidEmailException {
         if (user.getEmail().isEmpty() || user.getEmail() == null) {
-            throw new InvalidEmailException("Неправильный формат e-mail");
+            throw new InvalidEmailException(user.getEmail());
         } else {
             if (emailOfUsers.contains(user.getEmail())) {
-                throw new UserAlreadyExistException("Данный e-mail уже занят.");
+                throw new UserAlreadyExistException(user.getNickname());
             } else {
                 users.add(user);
                 emailOfUsers.add(user.getEmail());
