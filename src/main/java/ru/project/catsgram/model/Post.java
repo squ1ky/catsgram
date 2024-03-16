@@ -1,45 +1,36 @@
 package ru.project.catsgram.model;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
 public class Post implements Comparable<Post> {
 
+    @Setter
     private Integer id;
-    private static Integer nextId = 1;
-    private final String author;
-    private final Instant creationDate = Instant.now();
+    private final User author;
+    private final LocalDate creationDate;
+    @Setter
     private String description;
+    @Setter
     private String photoUrl;
 
-    public Post(String author, String description, String photoUrl) {
-        this.id = nextId++;
+    public Post(User author, String description, String photoUrl) {
         this.author = author;
         this.description = description;
         this.photoUrl = photoUrl;
+        this.creationDate = LocalDate.now();
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
+    public Post(Integer id, User author, String description, String photoUrl,
+                LocalDate creationDate) {
         this.id = id;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public Instant getCreationDate() {
-        return creationDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
+        this.author = author;
         this.description = description;
+        this.photoUrl = photoUrl;
+        this.creationDate = creationDate;
     }
 
     @Override
